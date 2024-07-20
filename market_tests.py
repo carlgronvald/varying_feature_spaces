@@ -113,11 +113,14 @@ def show_missing_payments():
         missing_payments_olms += [np.nan_to_num(shapleys_olms[np.isnan(X[:,:-1].T)])]
         present_payments_olms += [np.nan_to_num(shapleys_olms[~np.isnan(X[:,:-1].T)])]
 
-    print(missing_payments_olms)
-    print(np.mean(missing_payments_olm))
+    print(np.array(present_payments_olm).shape)
+    print("OLM:",np.mean(np.mean(present_payments_olm,axis=1)+np.mean(missing_payments_olm,axis=1)))
+    print("OLM-S:",np.mean(np.mean(present_payments_olms,axis=1)+np.mean(missing_payments_olms,axis=1)))
+    # print(missing_payments_olms)
+    # print(np.mean(missing_payments_olm))
     missing_payments_olm = np.array(missing_payments_olm)
     missing_payments_olms = np.array(missing_payments_olms)
-    print(np.nanmean(missing_payments_olms<0))
+    # print(np.nanmean(missing_payments_olms<0))
     plt.bar([0], np.nanmean(missing_payments_olm<0), label="OLM")
     plt.bar([1], np.nanmean(missing_payments_olms<0), label="OLM-S")
     plt.legend()
@@ -162,6 +165,8 @@ def show_negative_payments():
         payments_olm += [shapleys_olm[~np.isnan(shapleys_olm)]]
         payments_olms += [shapleys_olms[~np.isnan(shapleys_olm)]]
 
+    print("OLM:",np.mean(np.sum(payments_olm,axis=1)))
+    print("OLM-S:",np.mean(np.sum(payments_olms,axis=1)))
     payments_olm = np.array(payments_olm)
     payments_olms = np.array(payments_olms)
     print(np.nanmean(payments_olms<0))
@@ -214,15 +219,15 @@ def show_present_payments():
     print("average present OLMS payment:", np.nanmean(present_payments_olms))
 
 if __name__ == "__main__":
-    # X,y = gen_synth_data(200, 0.9, 1, 6)
-    # run_market(X, y, lambda k: OLMS(len(k), 0.01, 0.01), 25, [6], title="Cumulative feature payments, OLM-S regression (rho = 0.9)")
+    X,y = gen_synth_data(200, 0.9, 1, 6)
+    run_market(X, y, lambda k: OLMS(len(k), 0.01, 0.01), 25, [6], title="Cumulative feature payments, OLM-S regression (rho = 0.9)")
 
     # datagen = lambda k : gen_synth_data(200, 0.9, 1013+k, 3)
     # payout_difference(datagen, lambda k: OLM(len(k), 0.01), lambda k: OLMS(len(k), 0.01, 0.01), 25, [3], 100, "Market payout using OLM and OLM-S (rho=0.9)", ["OLM", "OLM-S"])
 
-    datagen = lambda k : load_sc_data(k, 240)
-    payout_difference(datagen, lambda k: OLM(len(k), 0.01), lambda k: OLMS(len(k), 0.01, 0.01), 0, [9], 90, "Market payout using OLM and OLM-S for the South Carolina dataset", ["OLM", "OLM-S"], warmup=0) #WARMUP DOESN'T MATTER SINCE OLM=OLM-S FOR ALL FEATURES PRESENT
+    # datagen = lambda k : load_sc_data(k, 240)
+    # payout_difference(datagen, lambda k: OLM(len(k), 0.01), lambda k: OLMS(len(k), 0.01, 0.01), 0, [9], 90, "Market payout using OLM and OLM-S for the South Carolina dataset", ["OLM", "OLM-S"], warmup=0) #WARMUP DOESN'T MATTER SINCE OLM=OLM-S FOR ALL FEATURES PRESENT
 
     # show_missing_payments()
-    show_present_payments()
-    # show_negative_payments()
+    # show_present_payments()
+    show_negative_payments()
